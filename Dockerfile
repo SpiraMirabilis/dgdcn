@@ -1,19 +1,19 @@
-FROM ubuntu:14.04
+FROM ubuntu:16.04
 MAINTAINER Jangshant Singh <mail@jangshant.com>
 
 ENV DEBIAN_FRONTEND noninteractive
 ## Install php nginx mysql supervisor drush git
-RUN apt-get -y update && \
-    apt-get install -y php-fpm php-cli php-gd php-mcrypt php-mysql php-curl \
-                       nginx \
-                       curl \
-		       supervisor && \
-    echo "mysql-server mysql-server/root_password password" | debconf-set-selections && \
+RUN apt update && \
+    apt install -y php-fpm php-cli php-gd php-mcrypt php-mysql php-curl && \
+    apt install -y nginx && \
+    apt install -y curl && \
+	apt install -y supervisor && \
+    apt install -y mysql-server && \
+    apt install -y libpng12-dev libjpeg-dev libpq-dev && \
+    apt install -y drush && \
+    apt install -y git && \
+	echo "mysql-server mysql-server/root_password password" | debconf-set-selections && \
     echo "mysql-server mysql-server/root_password_again password" | debconf-set-selections && \
-    apt-get install -y mysql-server && \
-    apt-get install -y libpng12-dev libjpeg-dev libpq-dev && \
-    apt-get install -y drush && \
-    apt-get install -y git && \
     rm -rf /var/lib/apt/lists/*
     ## Configuration
 RUN sed -i 's/^listen\s*=.*$/listen = 127.0.0.1:9000/' /etc/php/7.0/fpm/pool.d/www.conf && \
