@@ -3,16 +3,16 @@ MAINTAINER Jangshant Singh <mail@jangshant.com>
 
 ENV DEBIAN_FRONTEND noninteractive
 ## Install php nginx mysql supervisor drush git
-RUN apt update && \
-    apt install -y php-fpm php-cli php-gd php-mcrypt php-mysql php-curl && \
-    apt install -y nginx && \
-    apt install -y curl && \
-	apt install -y supervisor && \
-    apt install -y mysql-server && \
-    apt install -y libpng12-dev libjpeg-dev libpq-dev && \
-    apt install -y drush && \
-    apt install -y git && \
-	echo "mysql-server mysql-server/root_password password" | debconf-set-selections && \
+RUN apt update
+RUN    apt install -y php-fpm php-cli php-gd php-mcrypt php-mysql php-curl && \
+				nginx \
+				curl \
+				supervisor \
+				mysql-server \
+				libpng12-dev libjpeg-dev libpq-dev \
+				drush \
+				git 
+RUN	echo "mysql-server mysql-server/root_password password" | debconf-set-selections && \
     echo "mysql-server mysql-server/root_password_again password" | debconf-set-selections && \
     rm -rf /var/lib/apt/lists/*
     ## Configuration
@@ -28,10 +28,10 @@ WORKDIR /var/www/
 VOLUME /var/www/
 
 EXPOSE 80
-RUN 	chown -R www-data:www-data /var/www /var/log/php && \
-	if [ ! -d /var/lib/mysql/mysql ];then mysqld --initialize-insecure --user=root --datadir=/var/lib/mysql; fi && \
-	chown -R mysql:mysql /var/lib/mysql && \
-	exec /usr/bin/supervisord --nodaemon -c /etc/supervisor/supervisord.conf
+RUN 	chown -R www-data:www-data /var/www /var/log/php
+RUN	if [ ! -d /var/lib/mysql/mysql ];then mysqld --initialize-insecure --user=root --datadir=/var/lib/mysql; fi
+RUN	chown -R mysql:mysql /var/lib/mysql && \
+RUN	exec /usr/bin/supervisord --nodaemon -c /etc/supervisor/supervisord.conf
 	
 #ENTRYPOINT ["/entrypoint.sh"]
   
