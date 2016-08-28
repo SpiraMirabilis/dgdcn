@@ -1,10 +1,9 @@
-FROM ubuntu:16.04
+FROM ubuntu:14.04
 MAINTAINER Jangshant Singh <mail@jangshant.com>
 
 ENV DEBIAN_FRONTEND noninteractive
 ## Install php nginx mysql supervisor drush git
-RUN apt update && \
-    apt upgrade && \
+RUN apt -y update && \
     apt install -y php-fpm php-cli php-gd php-mcrypt php-mysql php-curl \
                        nginx \
                        curl \
@@ -29,6 +28,10 @@ WORKDIR /var/www/
 VOLUME /var/www/
 
 EXPOSE 80
-
-ENTRYPOINT ["/entrypoint.sh"]
+RUN 	chown -R www-data:www-data /var/www /var/log/php && \
+	if [ ! -d /var/lib/mysql/mysql ];then mysqld --initialize-insecure --user=root --datadir=/var/lib/mysql; fi && \
+	chown -R mysql:mysql /var/lib/mysql && \
+	exec /usr/bin/supervisord --nodaemon -c /etc/supervisor/supervisord.conf
+	
+#ENTRYPOINT ["/entrypoint.sh"]
   
